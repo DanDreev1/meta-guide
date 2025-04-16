@@ -14,11 +14,11 @@ import CharacterSelect from "@/components/ui/CharacterSelect";
 
 // Данные по ролям
 const roles = [
-  { name: "Mid", image: "/roles/mid.png" },
-  { name: "Roam", image: "/roles/roam.png" },
-  { name: "Jungle", image: "/roles/jungle.png" },
-  { name: "EXP", image: "/roles/exp.png" },
-  { name: "Gold", image: "/roles/gold.png" },
+  { name: "Mid", image: "/roles/mid.webp" },
+  { name: "Roam", image: "/roles/roam.webp" },
+  { name: "Jungle", image: "/roles/jungle.webp" },
+  { name: "EXP", image: "/roles/exp.webp" },
+  { name: "Gold", image: "/roles/gold.webp" },
 ];
 
 type VideoData = {

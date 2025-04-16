@@ -29,15 +29,15 @@ export default function MetaGuideHome() {
       </section>
 
       <section className="mb-16">
-        <h3 className="text-2xl font-semibold mb-4">Лучшие герои для каждой линии</h3>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {[...Array(5)].map((_, idx) => (
+        <h3 className="text-2xl font-semibold mb-4">Лучшие герои данной меты</h3>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+            {[...Array(6)].map((_, idx) => (
             <div
                 key={idx}
                 className="relative w-full max-w-[250px] aspect-[250/407] bg-gray-800 rounded-xl overflow-hidden group mx-auto"
             >
                 <Image
-                src={`/popular-hero/popular-hero${idx + 1}.png`}
+                src={`/popular-hero/popular-hero${idx + 1}.webp`}
                 alt={`Популярный герой ${idx + 1}`}
                 fill
                 className="object-cover duration-300 ease-in-out group-hover:scale-110"

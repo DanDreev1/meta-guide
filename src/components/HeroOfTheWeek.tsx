@@ -6,7 +6,7 @@ export default function HeroOfTheWeek() {
         {/* Картинка героя */}
         <div className="w-full md:min-w-[250px] md:w-[250px] h-[370px] bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center">
             <Image
-            src="/meta-hero.png"
+            src="/meta-hero.webp"
             alt="Герой недели"
             width={250}
             height={390}
@@ -32,7 +32,7 @@ export default function HeroOfTheWeek() {
                     {[1, 2, 3, 4, 5, 6].map((i) => (
                         <img
                         key={i}
-                        src={`/meta-items/item${i}.png`}
+                        src={`/meta-items/item${i}.webp`}
                         alt={`Item ${i}`}
                         className="w-12 h-12 rounded-full object-cover mx-auto"
                         />
@@ -46,7 +46,7 @@ export default function HeroOfTheWeek() {
                     {[1, 2, 3, 4, 5, 6].map((i) => (
                         <img
                         key={i}
-                        src={`/meta-items/item${i}.png`}
+                        src={`/meta-items/item${i}.webp`}
                         alt={`Item ${i}`}
                         className="w-12 h-12 rounded-full object-cover"
                         />
@@ -65,7 +65,7 @@ export default function HeroOfTheWeek() {
                     {[1, 2, 3, 4].map((i) => (
                         <img
                         key={i}
-                        src={`/meta-emblems/emblem${i}.png`}
+                        src={`/meta-emblems/emblem${i}.webp`}
                         alt={`Emblem ${i}`}
                         className="w-12 h-12 rounded-full object-cover mx-auto"
                         />
@@ -79,7 +79,7 @@ export default function HeroOfTheWeek() {
                 {[1, 2, 3, 4].map((i) => (
                     <img
                     key={i}
-                    src={`/meta-emblems/emblem${i}.png`}
+                    src={`/meta-emblems/emblem${i}.webp`}
                     alt={`Emblem ${i}`}
                     className="w-12 h-12 rounded-full object-cover"
                     />
