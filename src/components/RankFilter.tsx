@@ -12,7 +12,6 @@ const ranks = [
 ];
 
 const roles = ["roam", "mid", "jungle", "exp", "gold"];
-
 const filters = ["Пики", "Баны", "Винрейт"];
 
 const rankSources: Record<string, { text: string; url: string }> = {
@@ -43,9 +42,21 @@ const rankSources: Record<string, { text: string; url: string }> = {
 };
 
 export default function RankFilter() {
-  const [selectedRank, setSelectedRank] = useState<string>("");
+  const [selectedRanks, setSelectedRanks] = useState<string[]>([]);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+
+  const toggleRank = (rank: string) => {
+    setSelectedRanks((prev) => {
+      if (prev.includes(rank)) {
+        return prev.filter((r) => r !== rank);
+      } else if (prev.length < 2) {
+        return [...prev, rank];
+      } else {
+        return prev; // ограничиваем максимум двумя рангами
+      }
+    });
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -54,9 +65,9 @@ export default function RankFilter() {
         {ranks.map((rank) => (
           <button
             key={rank}
-            onClick={() => setSelectedRank(selectedRank === rank ? "" : rank)}
-            className={`px-4 py-2 rounded-md text-sm border ${
-              selectedRank === rank
+            onClick={() => toggleRank(rank)}
+            className={`px-4 py-2 rounded-md text-sm border transition-colors duration-300 ${
+              selectedRanks.includes(rank)
                 ? "bg-white text-black"
                 : "bg-gray-800 text-white"
             }`}
@@ -72,7 +83,7 @@ export default function RankFilter() {
           <button
             key={role}
             onClick={() => setSelectedRole(selectedRole === role ? null : role)}
-            className={`px-4 py-2 rounded-md text-sm border ${
+            className={`px-4 py-2 rounded-md text-sm border transition-colors duration-300 ${
               selectedRole === role
                 ? "bg-white text-black"
                 : "bg-gray-800 text-white"
@@ -89,7 +100,7 @@ export default function RankFilter() {
           <button
             key={filter}
             onClick={() => setSelectedFilter(selectedFilter === filter ? null : filter)}
-            className={`px-4 py-2 rounded-md text-sm border ${
+            className={`px-4 py-2 rounded-md text-sm border transition-colors duration-300 ${
               selectedFilter === filter
                 ? "bg-white text-black"
                 : "bg-gray-800 text-white"
@@ -101,25 +112,45 @@ export default function RankFilter() {
       </div>
 
       {/* Источник данных */}
-      {selectedRank && (
-        <div className="text-xs text-gray-400 mt-2">
-          {rankSources[selectedRank]?.text}:{" "}
-          <a
-            href={rankSources[selectedRank]?.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline text-blue-400"
-          >
-            {rankSources[selectedRank]?.url}
-          </a>
+      {selectedRanks.map((rank) => (
+        <div key={rank} className="text-xs text-gray-400 mt-2">
+          {rankSources[rank]?.text}: {" "}
+          {rankSources[rank]?.url && (
+            <a
+              href={rankSources[rank].url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-blue-400"
+            >
+              {rankSources[rank].url}
+            </a>
+          )}
         </div>
+      ))}
+
+      {/* Таблицы */}
+      {selectedRanks.length === 1 && (
+        <TrendsTable
+          selectedRank={selectedRanks[0]}
+          selectedRole={selectedRole}
+          selectedFilter={selectedFilter}
+        />
       )}
 
-      <TrendsTable
-        selectedRank={selectedRank}
-        selectedRole={selectedRole}
-        selectedFilter={selectedFilter}
-      />
+      {selectedRanks.length === 2 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <TrendsTable
+            selectedRank={selectedRanks[0]}
+            selectedRole={selectedRole}
+            selectedFilter={selectedFilter}
+          />
+          <TrendsTable
+            selectedRank={selectedRanks[1]}
+            selectedRole={selectedRole}
+            selectedFilter={selectedFilter}
+          />
+        </div>
+      )}
     </div>
   );
 }

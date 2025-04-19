@@ -1,16 +1,17 @@
 import Image from "next/image";
 
+import LazyImage from "@/components/LazyImage";
+
 export default function HeroOfTheWeek() {
   return (
     <section className="flex flex-col md:flex-row gap-4 p-4 rounded-2xl bg-gray-900 text-white max-w-[1200px] w-full">
         {/* Картинка героя */}
-        <div className="w-full md:min-w-[250px] md:w-[250px] h-[370px] bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center">
-            <Image
-            src="/meta-hero.webp"
-            alt="Герой недели"
-            width={250}
-            height={390}
-            className="object-cover w-full h-full"
+        <div className="w-full md:min-w-[250px] md:w-[250px] h-[370px] bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center">         
+            <LazyImage
+                src="/meta-hero.webp"
+                alt="Калея"
+                fill
+                className="object-cover rounded-xl"
             />
         </div>
 

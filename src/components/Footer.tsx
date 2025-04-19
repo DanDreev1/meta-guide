@@ -17,25 +17,25 @@ export default function Footer() {
       </p>
 
       {/* Логотип Moonton и дисклеймер */}
-      <div className="bg-gray-900/50 p-4 rounded-xl text-xs text-gray-400 mt-6 max-w-xl mx-auto text-center">
-        <div className="flex justify-center items-center gap-2 mb-2">
-        <Link
+      <div className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 p-6 rounded-2xl text-sm text-gray-300 mt-10 max-w-xl mx-auto text-center shadow-xl border border-white/10 backdrop-blur-md">
+        <div className="flex justify-center items-center gap-3 mb-4">
+            <Link
             href="https://www.moonton.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block mb-2"
-        >
+            className="inline-block"
+            >
             <Image
-            src="/moonton-logo.png"
-            alt="Moonton Logo"
-            width={75}
-            height={50}
-            className="mx-auto"
+                src="/moonton-logo.png"
+                alt="Moonton Logo"
+                width={80}
+                height={55}
+                className="mx-auto drop-shadow-md"
             />
-        </Link>
+            </Link>
         </div>
-        <p>
-            All MLBB assets, images, and characters used on this site are property of Moonton. Content on this website is provided for educational and informational purposes only. No MLBB assets are being sold directly. Any request for content removal will be respected immediately.
+        <p className="leading-relaxed">
+            All MLBB assets, images, and characters used on this site are property of <span className="font-semibold text-white">Moonton</span>. Content is provided for <span className="italic text-gray-400">educational and informational purposes</span> only. No MLBB assets are being sold. Any request for removal will be <span className="text-red-400 font-medium">respected immediately</span>.
         </p>
       </div>
     </footer>

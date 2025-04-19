@@ -11,14 +11,15 @@ import VideoCard from "@/components/VideoCard";
 import { useInView } from "react-intersection-observer";
 import CinemaPlayer from "@/components/CinemaPlayer";
 import CharacterSelect from "@/components/ui/CharacterSelect";
+import { useDebounce } from "@/hooks/useDebounce";
 
 // Данные по ролям
 const roles = [
-  { name: "Mid", image: "/roles/mid.webp" },
-  { name: "Roam", image: "/roles/roam.webp" },
-  { name: "Jungle", image: "/roles/jungle.webp" },
-  { name: "EXP", image: "/roles/exp.webp" },
-  { name: "Gold", image: "/roles/gold.webp" },
+  { name: "Мид", image: "/roles/mid.webp" },
+  { name: "Роум", image: "/roles/roam.webp" },
+  { name: "Лес", image: "/roles/jungle.webp" },
+  { name: "Опыт", image: "/roles/exp.webp" },
+  { name: "Золото", image: "/roles/gold.webp" },
 ];
 
 type VideoData = {
@@ -42,7 +43,7 @@ export default function GuidesPage() {
   const [fullscreen, setFullscreen] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  
+  const debouncedSearch = useDebounce(search, 300);
 
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 1,
@@ -52,9 +53,9 @@ export default function GuidesPage() {
   const filteredVideos = selectedRole
   ? videoData.filter((video) => {
       const matchesRole = video.tags.includes(selectedRole.toLowerCase());
-      const matchesSearch = search
-        ? video.title.toLowerCase().includes(search.toLowerCase()) ||
-          video.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()))
+      const matchesSearch = debouncedSearch
+        ? video.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+          video.tags.some((tag) => tag.toLowerCase().includes(debouncedSearch.toLowerCase()))
         : true;
       const matchesCharacter = selectedCharacter
         ? video.tags.includes(selectedCharacter.toLowerCase())
@@ -103,35 +104,35 @@ export default function GuidesPage() {
             />
         )}
 
-        <main className="px-6 py-12 w-full max-w-[1800px] mx-auto">
+        <main className="px-6 py-12 pt-30 w-full max-w-[1800px] mx-auto">
         {/* Выбор ролей */}
         <AnimatePresence>
             {!selectedRole && (
                 <motion.section
-                key="roles"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-                className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+                    key="roles"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
                 >
                 {roles.map((role) => (
                     <motion.div
-                    key={role.name}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`w-full cursor-pointer rounded-xl overflow-hidden border-2 bg-gray-900 ${
-                        selectedRole === role.name ? "border-white" : "border-transparent"
-                    }`}
-                    onClick={() => setSelectedRole(role.name)}
+                        key={role.name}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`w-full cursor-pointer rounded-xl overflow-hidden border-2 bg-gray-900 ${
+                            selectedRole === role.name ? "border-white" : "border-transparent"
+                        }`}
+                        onClick={() => setSelectedRole(role.name)}
                     >
                     {/* Картинка с высотой */}
                     <div className="w-full h-[300px] md:h-[360px] lg:h-[420px] relative">
                         <Image
-                        src={role.image}
-                        alt={role.name}
-                        fill
-                        className="object-cover"
+                            src={role.image}
+                            alt={role.name}
+                            fill
+                            className="object-cover"
                         />
                     </div>
 
@@ -157,29 +158,29 @@ export default function GuidesPage() {
                 className="flex flex-col gap-8"
             >
                 <Button
-                    variant="ghost"
-                    className="w-fit text-white flex items-center gap-2 mb-4 border-white border-1"
-                    onClick={() => setSelectedRole(null)}
+                        variant="ghost"
+                        className="w-fit text-white flex items-center gap-2 mb-4 border-white border-1"
+                        onClick={() => setSelectedRole(null)}
                     >
                     <ArrowLeft size={18} /> Назад к ролям
                 </Button>
 
                 {/* Поиск */}
                 <Input
-                placeholder={`Поиск видео для роли ${selectedRole}...`}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="bg-gray-900 text-white border-gray-700"
+                    placeholder={`Поиск видео для роли ${selectedRole}...`}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="bg-gray-900 text-white border-gray-700"
                 />
 
                 <div className="flex flex-wrap gap-3">
                     {categories.map((cat) => (
                         <Button 
-                        key={cat} 
-                        onClick={() => setSelectedCategory(prev => prev === cat.toLowerCase() ? null : cat.toLowerCase())}
-                        variant="outline"
-                        className={`border-white/20 hover:bg-white/10 hover:text-white ${selectedCategory === cat.toLowerCase() ? 'bg-white/10 text-white' : 'text-black'}`}
-                      >
+                            key={cat} 
+                            onClick={() => setSelectedCategory(prev => prev === cat.toLowerCase() ? null : cat.toLowerCase())}
+                            variant="outline"
+                            className={`border-white/20 hover:bg-white/10 hover:text-white ${selectedCategory === cat.toLowerCase() ? 'bg-white/10 text-white' : 'text-black'}`}
+                        >
                         {cat}
                       </Button>                      
                     ))}
@@ -199,9 +200,10 @@ export default function GuidesPage() {
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {visibleVideos.map((video, idx) => (
                     <motion.div
-                        key={idx}
+                        key={`${video.title}-${idx}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
                         transition={{ duration: 0.3, delay: idx * 0.05 }}
                         className="cursor-pointer"
                     >

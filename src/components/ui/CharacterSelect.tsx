@@ -8,16 +8,29 @@ interface CharacterFilterProps {
   selectedRole: string | null;
 }
 
+const classOptions = ["Поддержка", "Танк", "Маг", "Стрелок", "Боец", "Убийца"];
+
 export default function CharacterFilter({
   selectedCharacter,
   setSelectedCharacter,
   selectedRole,
 }: CharacterFilterProps) {
   const [showAll, setShowAll] = useState(false);
+  const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
 
-  const filteredCharacters = charactersData.filter(character =>
-    character.roles.includes(selectedRole?.toLowerCase() || "")
-  );
+  const toggleClass = (cls: string) => {
+    setSelectedClasses((prev) =>
+      prev.includes(cls) ? prev.filter((c) => c !== cls) : [...prev, cls]
+    );
+  };
+
+  const filteredCharacters = charactersData.filter((character) => {
+    const roleMatch = selectedRole ? character.roles.includes(selectedRole.toLowerCase()) : true;
+    const classMatch = selectedClasses.length > 0
+      ? selectedClasses.every((cls) => character.class && Array.isArray(character.class) && character.class.includes(cls))
+      : true;
+    return roleMatch && classMatch;
+  });
 
   const visibleCharacters = showAll
     ? filteredCharacters
@@ -25,6 +38,23 @@ export default function CharacterFilter({
 
   return (
     <div>
+      {/* Фильтры классов */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {classOptions.map((cls) => (
+          <button
+            key={cls}
+            onClick={() => toggleClass(cls)}
+            className={`px-3 py-1 rounded-full text-sm font-medium border transition-all whitespace-nowrap ${
+              selectedClasses.includes(cls)
+                ? "bg-white text-black"
+                : "bg-gray-800 text-white"
+            }`}
+          >
+            {cls}
+          </button>
+        ))}
+      </div>
+
       {/* Desktop view */}
       <div className="hidden md:flex flex-wrap gap-2">
         {filteredCharacters.map((char) => (

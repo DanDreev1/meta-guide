@@ -1,11 +1,17 @@
 "use client";
 
+import { motion } from "framer-motion";
 import HeroOfTheWeek from "@/components/HeroOfTheWeek";
 import RankFilter from "@/components/RankFilter";
 
 export default function MetaPage() {
   return (
-    <main className="px-6 py-12 w-full max-w-[1800px] mx-auto">
+    <motion.main
+      className="px-6 py-20 pt-30 w-full max-w-[1800px] mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       {/* Title */}
       <h1 className="text-4xl font-bold text-white mb-10">Мета</h1>
 
@@ -14,11 +20,8 @@ export default function MetaPage() {
 
       {/* Тренды */}
       <section className="mb-16 mt-16">
-        {/* Таблица для выбранного ранга */}
         <h2 className="text-2xl font-bold text-white mb-4">Тренды</h2>
-
         <RankFilter />
-
       </section>
 
       {/* Анализ патчей */}
@@ -28,6 +31,6 @@ export default function MetaPage() {
           Coming soon...
         </div>
       </section>
-    </main>
+    </motion.main>
   );
 }

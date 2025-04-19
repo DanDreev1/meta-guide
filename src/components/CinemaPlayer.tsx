@@ -102,15 +102,13 @@ export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-40"
-        onClick={() => {
-            if (!isMiniPlayer) {
-              setIsMiniPlayer(true);
-              setIsFullscreen(false);
-            } else {
-              onClose();
-            }
-        }}
+        className={`fixed z-40 ${
+            isMiniPlayer ? "bottom-4 right-4 w-[256px] h-[144px]" : "inset-0"
+        }`}
+        onClick={!isMiniPlayer ? () => {
+            setIsMiniPlayer(true);
+            setIsFullscreen(false);
+        } : undefined}
       >
         <motion.div
           ref={fullscreenRef}
@@ -133,13 +131,13 @@ export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
                   position: "fixed",
                 }
               : {
-                  top: "50%",
+                  top: "55%",
                   left: "50%",
                   translateX: "-50%",
                   translateY: "-50%",
                   bottom: "auto",
                   right: "auto",
-                  width: "100%",
+                  width: "60%",
                   height: "auto",
                   maxWidth: "1000px",
                   borderRadius: 0,
@@ -147,8 +145,10 @@ export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
                 }),
           }}
           exit={{ scale: 0.95, y: 50 }}
-          transition={{ duration: 0.3 }}
-          className="bg-gray-900 overflow-hidden shadow-xl z-50"
+          transition={{ duration: isMiniPlayer ? 0.3 : 0 }}
+          className={`bg-gray-900 overflow-hidden shadow-xl z-50 w-full h-full ${
+            isMiniPlayer ? "rounded-xl" : ""
+          }`}
           onClick={(e) => {
             if (isMiniPlayer) {
               setIsMiniPlayer(false);
@@ -158,7 +158,6 @@ export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
         >
           <div className={`relative ${isMiniPlayer ? "w-full h-full" : "aspect-video"} bg-black`}>
             <div ref={playerRef} className="absolute inset-0 z-0" />
-            <div className="absolute inset-0 z-10" />
 
             <button
               onClick={togglePlayPause}
@@ -186,20 +185,27 @@ export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
                     {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                 </button>
 
-                {showVolumeBar && (
-                    <input
+                <AnimatePresence>
+                    {showVolumeBar && (
+                    <motion.input
+                        key="volume-bar"
                         type="range"
                         min={0}
                         max={100}
                         step={1}
                         value={volume}
                         onChange={handleVolumeChange}
-                        className="w-[100px] h-1.5 appearance-none bg-gray-700 rounded cursor-pointer"
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: 100, opacity: 1 }}
+                        exit={{ width: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="h-1.5 appearance-none bg-gray-700 rounded cursor-pointer"
                         style={{
                         background: `linear-gradient(to right, #ef4444 ${volume}%, #374151 ${volume}%)`,
                         }}
-                    />                  
-                )}
+                    />
+                    )}
+                </AnimatePresence>
             </div>
 
             <button

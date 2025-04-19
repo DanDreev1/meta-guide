@@ -3,14 +3,20 @@
 import Link from "next/link";
 import { Home, Book, Flame, User, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
 
   return (
-    <header className="flex items-center justify-around mb-12 relative sm:justify-between">
+    <header className="fixed top-0 left-0 w-full z-50 bg-black px-5 py-5 flex items-center justify-around sm:justify-between shadow-md">
       {/* Логотип */}
-      <h1 className="text-3xl font-bold tracking-tight">MetaGuide.gg</h1>
+      <Link href="/">
+        <h1 className="text-3xl font-bold tracking-tight">MetaGuide.gg</h1>
+      </Link>
 
       {/* Навигация desktop */}
       <nav className="hidden md:flex gap-6 text-sm md:text-base items-center absolute left-1/2 -translate-x-1/2">
@@ -18,7 +24,15 @@ export default function Header() {
           <Home size={18} /> Главная
         </Link>
         <Link href="/guides" className="flex items-center gap-1 hover:text-gray-300 transition">
-          <Book size={18} /> Гайды
+            <span
+                onClick={() => {
+                    window.location.href = "/guides";
+                    setIsOpen(false);
+                }}
+                className="flex items-center gap-1 hover:text-gray-300 transition cursor-pointer"
+            >
+                <Book size={18} /> Гайды
+            </span>
         </Link>
         <Link href="/meta" className="flex items-center gap-1 hover:text-gray-300 transition">
           <Flame size={18} /> Мета
@@ -52,36 +66,18 @@ export default function Header() {
         }`}
       >
         <nav className="flex flex-col gap-4 mt-12">
-            <Link
-                href="/"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 hover:text-gray-300 transition"
-            >
-                <Flame size={18} /> Главная
-            </Link>
-
-            <Link
-                href="/guides"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 hover:text-gray-300 transition"
-            >
-                <Book size={18} /> Гайды
-            </Link>
-
-            <Link
-                href="/meta"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 hover:text-gray-300 transition"
-            >
-                <Flame size={18} /> Мета
-            </Link>
-
-            <Link
-                href="/tools"
-                className="flex items-center gap-2 text-gray-500 italic md:cursor-not-allowed md:pointer-events-none"
-            >
-                🛠 Инструменты
-            </Link>
+          <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2 hover:text-gray-300 transition">
+            <Flame size={18} /> Главная
+          </Link>
+          <Link href="/guides" onClick={() => setIsOpen(false)} className="flex items-center gap-2 hover:text-gray-300 transition">
+            <Book size={18} /> Гайды
+          </Link>
+          <Link href="/meta" onClick={() => setIsOpen(false)} className="flex items-center gap-2 hover:text-gray-300 transition">
+            <Flame size={18} /> Мета
+          </Link>
+          <Link href="/tools" className="flex items-center gap-2 text-gray-500 italic md:cursor-not-allowed md:pointer-events-none">
+            🛠 Инструменты
+          </Link>
         </nav>
 
         <div className="flex flex-col gap-4">
