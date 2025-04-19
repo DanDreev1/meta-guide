@@ -16,8 +16,8 @@ export default function Footer() {
         &copy; 2025 MetaGuide.gg — Built for gamers, by a gamer.
       </p>
 
-      {/* Логотип Moonton и дисклеймер */}
-      <div className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 p-6 rounded-2xl text-sm text-gray-300 mt-10 max-w-xl mx-auto text-center shadow-xl border border-white/10 backdrop-blur-md">
+    {/* Footer: Moonton дисклеймер */}
+    <div className="w-full bg-gradient-to-br from-gray-900/60 to-gray-800/60 p-6 text-sm text-gray-300 text-center mt-16 border-t border-white/10 backdrop-blur-md">
         <div className="flex justify-center items-center gap-3 mb-4">
             <Link
             href="https://www.moonton.com/"
@@ -34,10 +34,14 @@ export default function Footer() {
             />
             </Link>
         </div>
-        <p className="leading-relaxed">
-            All MLBB assets, images, and characters used on this site are property of <span className="font-semibold text-white">Moonton</span>. Content is provided for <span className="italic text-gray-400">educational and informational purposes</span> only. No MLBB assets are being sold. Any request for removal will be <span className="text-red-400 font-medium">respected immediately</span>.
+        <p className="leading-relaxed max-w-4xl mx-auto px-4">
+            All MLBB assets, images, and characters used on this site are property of{" "}
+            <span className="font-semibold text-white">Moonton</span>. Content is provided for{" "}
+            <span className="italic text-gray-400">educational and informational purposes</span> only.
+            No MLBB assets are being sold. Any request for removal will be{" "}
+            <span className="text-red-400 font-medium">respected immediately</span>.
         </p>
-      </div>
+    </div>
     </footer>
   );
 }
