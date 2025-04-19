@@ -3,42 +3,26 @@
 import { useState } from "react";
 import TrendsTable from "@/components/TrendsTable";
 
-const ranks = [
+const tournamentRanks = ["Киберспорт"];
+const normalRanks = [
   "Мифический",
   "Мифическая честь",
-  "Мифическая Слава",
-  "Мифический Бессмертный",
+  "Мифическая Слава+",
   "Киберспорт",
 ];
 
 const roles = ["roam", "mid", "jungle", "exp", "gold"];
 const filters = ["Пики", "Баны", "Винрейт"];
 
-const rankSources: Record<string, { text: string; url: string }> = {
-  "< Мифический": {
-    text: "Источник откуда берется информация",
-    url: "https://m.mobilelegends.com/rank",
-  },
-  "Мифический": {
-    text: "Источник откуда берется информация",
-    url: "https://m.mobilelegends.com/rank",
-  },
-  "Мифическая честь": {
-    text: "Источник откуда берется информация",
-    url: "https://m.mobilelegends.com/rank",
-  },
-  "Мифическая Слава": {
-    text: "Источник откуда берется информация",
-    url: "https://m.mobilelegends.com/rank",
-  },
-  "Мифический Бессмертный": {
-    text: "Источник откуда берется информация",
-    url: "https://m.mobilelegends.com/rank",
-  },
-  "Киберспорт": {
-    text: "Ожидается окончание MCC SEASON 5 и статистики с турнира",
-    url: "",
-  },
+const sourceLinks = {
+    normal: {
+      text: "Источник: официальная MLBB статистика",
+      url: "https://m.mobilelegends.com/rank",
+    },
+    tournament: {
+      text: "Источник: ожидается MCC Season 5",
+      url: "",
+    },
 };
 
 export default function RankFilter() {
@@ -58,11 +42,15 @@ export default function RankFilter() {
     });
   };
 
+  const tournamentRanks = ["Киберспорт"];
+  const hasTournament = selectedRanks.includes("Киберспорт");
+  const hasNormal = selectedRanks.some(rank => !tournamentRanks.includes(rank));  
+
   return (
     <div className="flex flex-col gap-4">
       {/* Фильтр по рангу */}
       <div className="flex flex-wrap gap-2">
-        {ranks.map((rank) => (
+        {normalRanks.map((rank) => (
           <button
             key={rank}
             onClick={() => toggleRank(rank)}
@@ -112,21 +100,29 @@ export default function RankFilter() {
       </div>
 
       {/* Источник данных */}
-      {selectedRanks.map((rank) => (
-        <div key={rank} className="text-xs text-gray-400 mt-2">
-          {rankSources[rank]?.text}: {" "}
-          {rankSources[rank]?.url && (
-            <a
-              href={rankSources[rank].url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline text-blue-400"
-            >
-              {rankSources[rank].url}
-            </a>
-          )}
-        </div>
-      ))}
+      {selectedRanks.length > 0 && (
+        <>
+            {hasNormal && (
+            <div className="text-xs text-gray-400 mt-2">
+                Источник: официальная MLBB статистика:{" "}
+                <a
+                href="https://m.mobilelegends.com/rank"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-blue-400"
+                >
+                https://m.mobilelegends.com/rank
+                </a>
+            </div>
+            )}
+
+            {hasTournament && (
+            <div className="text-xs text-gray-400 mt-1">
+                Источник: ожидается MCC Season 5
+            </div>
+            )}
+        </>
+      )}
 
       {/* Таблицы */}
       {selectedRanks.length === 1 && (
