@@ -23,12 +23,12 @@ export default async function ProfilePage() {
           <div className="space-y-8">
             <div className="space-y-4">
               <h3 className="text-xl font-medium text-gray-200">Войти</h3>
-              <LoginForm dark />
+              <LoginForm />
             </div>
             <hr className="border-gray-500" />
             <div className="space-y-4">
               <h3 className="text-xl font-medium text-gray-200">Регистрация</h3>
-              <RegisterForm dark />
+              <RegisterForm />
             </div>
           </div>
         </div>
