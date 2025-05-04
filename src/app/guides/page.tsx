@@ -6,12 +6,15 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { videoData } from "@/lib/data/videos";
-import VideoCard from "@/components/VideoCard";
 import { useInView } from "react-intersection-observer";
 import CinemaPlayer from "@/components/CinemaPlayer";
 import CharacterSelect from "@/components/ui/CharacterSelect";
 import { useDebounce } from "@/hooks/useDebounce";
+import AdminGuideForm from "@/components/AdminGuideForm";
+
+import VideoCard from "@/components/VideoCard";
+
+import { supabase } from '@/lib/supabaseClient'
 
 // Данные по ролям
 const roles = [
@@ -23,6 +26,7 @@ const roles = [
 ];
 
 type VideoData = {
+    id: string;
     title: string;
     tags: string[];
     videoUrl?: string;
@@ -45,17 +49,65 @@ export default function GuidesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 300);
 
+  const [loading, setLoading] = useState(true);
+
+  const [guides, setGuides] = useState<VideoData[]>([]);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const getUserAndData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.user_metadata?.role === 'admin') {
+        setIsAdmin(true);
+      }
+
+      const res = await fetch("/api/guides");
+      const data = await res.json();
+      setGuides(data);
+      setLoading(false);
+    };
+    getUserAndData();
+  }, []);
+
+  useEffect(() => {
+    supabase
+      .from('guides')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (error) console.error(error);
+        else setGuides(data!);
+      })
+      .finally(() => setLoading(false));
+  }, [supabase]);
+
+  useEffect(() => {
+    const fetchGuides = async () => {
+      const res = await fetch("/api/guides");
+      const data = await res.json();
+  
+      const normalized = data.map((item: any) => ({
+        ...item,
+        videoUrl: item.video_url,
+      }));
+  
+      setGuides(normalized);
+    };
+    fetchGuides();
+  }, []);  
+
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 1,
     triggerOnce: false,
   });
 
   const filteredVideos = selectedRole
-  ? videoData.filter((video) => {
+  ? guides.filter((video) => {
       const matchesRole = video.tags.includes(selectedRole.toLowerCase());
-      const matchesSearch = debouncedSearch
-        ? video.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-          video.tags.some((tag) => tag.toLowerCase().includes(debouncedSearch.toLowerCase()))
+      const matchesSearch = search
+        ? video.title.toLowerCase().includes(search.toLowerCase()) ||
+          video.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()))
         : true;
       const matchesCharacter = selectedCharacter
         ? video.tags.includes(selectedCharacter.toLowerCase())
@@ -67,7 +119,7 @@ export default function GuidesPage() {
       return matchesRole && matchesSearch && matchesCharacter && matchesCategory;
     })
   : [];
-  
+
   const visibleVideos = filteredVideos.slice(0, visibleCount);
 
     
@@ -192,6 +244,8 @@ export default function GuidesPage() {
                     setSelectedCharacter={setSelectedCharacter}
                 />
 
+                {isAdmin && <AdminGuideForm />}
+
                 {/* Тайтл перед видео */}
                 <h3 className="text-2xl font-bold text-white mt-4">Самые популярные видео</h3>
 
@@ -208,16 +262,16 @@ export default function GuidesPage() {
                         className="cursor-pointer"
                     >
                         <VideoCard
-                        title={video.title}
-                        tags={video.tags}
-                        videoUrl={video.videoUrl}
-                        onClick={() => {
-                            setFullscreen(false);
-                            setTimeout(() => {
-                            setSelectedVideo(video);
-                            setFullscreen(true);
-                            }, 50);
-                        }}
+                            title={video.title}
+                            tags={video.tags}
+                            videoUrl={video.video_url}
+                            onClick={() => {
+                                setFullscreen(false);
+                                setTimeout(() => {
+                                setSelectedVideo(video);
+                                setFullscreen(true);
+                                }, 50);
+                            }}
                         />
                     </motion.div>
                 ))}

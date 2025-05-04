@@ -13,10 +13,13 @@ type VideoCardProps = {
 
 export default function VideoCard({ title, tags, videoUrl, onClick }: VideoCardProps) {
   const [error, setError] = useState(false);
+  const [fallback, setFallback] = useState(false);
 
   const videoId = videoUrl ? extractVideoId(videoUrl) : null;
   const previewImage = videoId
-    ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+    ? fallback
+      ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+      : `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
     : null;
 
   return (
@@ -32,10 +35,15 @@ export default function VideoCard({ title, tags, videoUrl, onClick }: VideoCardP
               alt="Preview"
               fill
               className="object-cover"
-              onError={() => setError(true)}
+              onError={() => {
+                if (!fallback) {
+                  setFallback(true); // Пробуем hqdefault, если maxresdefault не найден
+                } else {
+                  setError(true); // Если и второй вариант не работает — показать заглушку
+                }
+              }}
             />
           )}
-
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-semibold">
             ▶ Нажмите для просмотра
           </div>

@@ -13,6 +13,7 @@ interface CinemaPlayerProps {
 }
 
 export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
+  console.log("videoUrl", video.videoUrl);
   const { playerRef, playerInstance, isReady, isPlaying } = useYoutubePlayer(video.videoUrl);
   const [progress, setProgress] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -43,7 +44,11 @@ export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
   useEffect(() => {
     const interval = setInterval(() => {
       const player = playerInstance.current;
-      if (player?.getCurrentTime && player?.getDuration) {
+      if (
+        player &&
+        typeof player.getCurrentTime === "function" &&
+        typeof player.getDuration === "function"
+      ) {
         const current = player.getCurrentTime();
         const duration = player.getDuration();
         if (duration > 0) {
@@ -52,14 +57,27 @@ export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
       }
     }, 500);
     return () => clearInterval(interval);
-  }, [playerInstance]);
+  }, [playerInstance]);  
 
   const togglePlayPause = () => {
     const player = playerInstance.current;
-    if (!player) return;
-    const state = player.getPlayerState();
-    state === window.YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo();
-  };
+  
+    if (!isReady || !player) {
+      console.warn("⛔ Player is not ready or not available:", player);
+      return;
+    }
+  
+    try {
+      const state = player.getPlayerState?.();
+      if (state === window.YT.PlayerState.PLAYING) {
+        player.pauseVideo();
+      } else {
+        player.playVideo();
+      }
+    } catch (err) {
+      console.error("Ошибка при получении состояния плеера:", err);
+    }
+  };     
 
   const toggleMute = () => {
     const player = playerInstance.current;
@@ -118,6 +136,7 @@ export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
             y: 0,
             ...(isMiniPlayer
               ? {
+                  position: "fixed",
                   bottom: 16,
                   right: 16,
                   top: "auto",
@@ -128,7 +147,6 @@ export default function CinemaPlayer({ video, onClose }: CinemaPlayerProps) {
                   height: 144,
                   maxWidth: 256,
                   borderRadius: 12,
-                  position: "fixed",
                 }
               : {
                   top: "55%",

@@ -1,5 +1,4 @@
-import { useRef, useState, useEffect } from "react";
-import { extractVideoId } from "@/lib/extractVideoId";
+import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -9,56 +8,64 @@ declare global {
 }
 
 export const useYoutubePlayer = (videoUrl?: string) => {
-  const playerRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<HTMLDivElement | null>(null);
   const playerInstance = useRef<YT.Player | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  useEffect(() => {
-    if (!videoUrl) return;
+  const extractVideoId = (url?: string): string | null => {
+    if (!url) return null;
+    const match = url.match(/(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return match?.[1] || null;
+  };
 
+  useEffect(() => {
     const videoId = extractVideoId(videoUrl);
     if (!videoId) return;
 
-    const createPlayer = () => {
+    const loadYouTubeAPI = () => {
+      if (window.YT && window.YT.Player) {
+        createPlayer(videoId);
+      } else {
+        const script = document.createElement("script");
+        script.src = "https://www.youtube.com/iframe_api";
+        document.body.appendChild(script);
+
+        window.onYouTubeIframeAPIReady = () => {
+          createPlayer(videoId);
+        };
+      }
+    };
+
+    const createPlayer = (videoId: string) => {
       if (!playerRef.current) return;
 
+      if (playerInstance.current) {
+        playerInstance.current.destroy();
+      }
+
       playerInstance.current = new window.YT.Player(playerRef.current, {
-        videoId,
-        width: "100%",
         height: "100%",
+        width: "100%",
+        videoId,
         playerVars: {
           autoplay: 1,
           controls: 0,
-          modestbranding: 1,
           rel: 0,
-          iv_load_policy: 3,
-          disablekb: 1,
-          fs: 0,
-          playsinline: 1,
-          enablejsapi: 1,
-          origin: window.location.origin,
+          modestbranding: 1,
         },
         events: {
-          onReady: () => setIsReady(true),
-          onStateChange: (e) => setIsPlaying(e.data === window.YT.PlayerState.PLAYING),
+          onReady: () => {
+            setIsReady(true);
+          },
+          onStateChange: (event) => {
+            setIsPlaying(event.data === window.YT.PlayerState.PLAYING);
+          },
         },
       });
     };
 
-    if (window.YT && window.YT.Player) {
-      createPlayer();
-    } else {
-      window.onYouTubeIframeAPIReady = createPlayer;
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      document.body.appendChild(tag);
-    }
-
-    return () => {
-      playerInstance.current?.destroy();
-      playerInstance.current = null;
-    };
+    loadYouTubeAPI();
   }, [videoUrl]);
 
   return { playerRef, playerInstance, isReady, isPlaying };
