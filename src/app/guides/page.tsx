@@ -25,12 +25,13 @@ const roles = [
   { name: "Золото", image: "/roles/gold.webp" },
 ];
 
-type VideoData = {
+interface VideoData {
     id: string;
     title: string;
     tags: string[];
-    videoUrl?: string;
-};
+    video_url: string;
+    created_at: string;
+}
 
 // Категории
 const categories = ["База", "Для про", "Прокачка мышления", "Стратегии"];
@@ -71,16 +72,24 @@ export default function GuidesPage() {
   }, []);
 
   useEffect(() => {
-    supabase
-      .from('guides')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data, error }) => {
+    const fetchData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('guides')
+          .select('*')
+          .order('created_at', { ascending: false });
+  
         if (error) console.error(error);
         else setGuides(data!);
-      })
-      .finally(() => setLoading(false));
-  }, [supabase]);
+      } catch (err) {
+        console.error('Ошибка при получении данных:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, [supabase]);  
 
   useEffect(() => {
     const fetchGuides = async () => {
