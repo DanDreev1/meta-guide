@@ -89,7 +89,7 @@ export default function GuidesPage() {
     };
   
     fetchData();
-  }, [supabase]);  
+  }, []);
 
   useEffect(() => {
     const fetchGuides = async () => {
